@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Board } from './board.domain';
 import { BoardCreateDto } from './dto/board.create.dto';
+import { BoardViewDto } from './dto/board.view.dto';
 
 @Injectable()
 export class BoardService {
@@ -11,9 +12,10 @@ export class BoardService {
     return this.boards;
   }
 
-  //id는 시퀀스하게 올라가지만.. filter의 반환은 여러개 일 수 있음.. 반환타입을 어떻게 해야할 지..
-  findById(boardId: Number) {
-    return this.boards.filter((i) => i.boardId === boardId);
+  findById(findBoardId: string) :BoardViewDto{
+    const {boardId, title, content} = this.boards.find(board=> board.boardId === parseInt(findBoardId));
+    const boardViewDto : BoardViewDto = new BoardViewDto(boardId, title, content);
+    return boardViewDto;
   }
 
   save(boardCreateDto: BoardCreateDto) {
@@ -25,5 +27,9 @@ export class BoardService {
     );
     console.log(board);
     this.boards.push(board);
+  }
+
+  delete(deleteBoardId:string){
+    this.boards = this.boards.filter( board=> board.boardId !== parseInt(deleteBoardId));
   }
 }
